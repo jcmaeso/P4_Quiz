@@ -1,4 +1,3 @@
-
 const Sequalize = require('sequelize');
 const {models} = require('./model');
 const {log, biglog, errorlog, colorize} = require("./out");
@@ -41,7 +40,7 @@ exports.listCmd = (socket,rl) => {
 
 };
 
-const validateId = (socket,id) =>{
+const validateId = (id) =>{
     return new Sequalize.Promise((resolve,reject)=> {
         if(typeof id === "undefined") {
             reject(new Error(`Falta el parametro ID`));
@@ -86,7 +85,7 @@ exports.showCmd = (socket,rl, id) => {
 *
 * @param rl Objeto readline usado para implementar el CLI.
 */
-const readQuestion = (socket,rl,text) =>{
+const readQuestion = (rl,text) =>{
     return new Promise((resolve,reject) => {
         rl.question(colorize(text,'red'), answer => {
             resolve(answer.trim());
@@ -170,7 +169,6 @@ exports.editCmd = (socket,rl, id) => {
 */
 exports.testCmd = (socket,rl, id) => {
     //log('Probar el quiz indicado');
-
     validateId(id).then(id => models.quiz.findById(id)).then(quiz => {
         if(!quiz){
             throw new Error(`No existe un quiz asociado al id ${id}`);
@@ -234,11 +232,11 @@ exports.playCmd = (socket,rl) => {
                     readQuestion(rl,`${quiz.question}: `).then(ans => {
                         if(ans.toUpperCase().trim() === quiz.answer.toUpperCase().trim()){
                             score++;
-                            socket.write(`  CORRECTO - Lleva ${score} aciertos`);
+                            socket.write(`  CORRECTO - Lleva ${score} aciertos \n`);
                             resolve(playStart());
                         }else{
-                            socket.write('  INCORRECTO ');
-                            socket.write(`  Fin del juego. Aciertos: ${score} `);
+                            socket.write('  INCORRECTO \n');
+                            socket.write(`  Fin del juego. Aciertos: ${score} \n`);
                             resolve();
                         }
                     });
